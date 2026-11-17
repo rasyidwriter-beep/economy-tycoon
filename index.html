@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Economy Tycoon</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#172b24;--muted:#66766e;--green:#176b4b;--line:#dce6df;--soft:#eaf3ed;--red:#b43b35}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:960px;margin:auto;padding:18px;display:grid;gap:14px}
+.hero{background:linear-gradient(120deg,#123d30,#26734f);color:#fff;padding:22px;border-radius:18px}
+.kicker{font-size:11px;letter-spacing:2px;opacity:.8;font-weight:700}.hero h1{font-size:clamp(26px,6vw,38px);margin:5px 0}.hero p{margin:0;opacity:.85}
+.topline{display:flex;justify-content:space-between;align-items:end;margin-top:20px;gap:10px}.day{font-size:30px;font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}.label{font-size:12px;color:var(--muted)}.value{font-size:clamp(18px,4vw,25px);font-weight:800;overflow-wrap:anywhere}
+section h2{font-size:17px;margin:0 0 12px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:11px 13px;border-radius:10px;font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--green);border-color:var(--green);color:white}.selected{outline:2px solid var(--green);background:var(--soft)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}.btnrow button{flex:1;min-width:90px}.choicegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.choicegrid.two{grid-template-columns:repeat(2,1fr)}.choicegrid button{min-height:55px}
+.small{font-size:12px;color:var(--muted);font-weight:500;display:block}
+.note{background:var(--soft);border-radius:10px;padding:12px;font-size:13px}
+.rows{display:grid;gap:8px}.row{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:6px 0}.row:last-child{border:0}
+.log{font-size:13px;padding:8px 0;border-bottom:1px solid var(--line)}.log:last-child{border:0}
+.good{color:var(--green)}.bad{color:var(--red)}.hidden{display:none}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:8px}
+@media(max-width:650px){main{padding:12px}.grid{grid-template-columns:repeat(2,1fr)}.twocol{grid-template-columns:1fr}.hero{padding:18px}.choicegrid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+ <div class="kicker">BUSINESS SIMULATION</div><h1>ECONOMY TYCOON</h1><p>Bangun bisnis. Kuasai keputusan ekonomi.</p>
+ <div class="topline"><div><div class="kicker">HARI OPERASIONAL</div><div class="day" id="day">01 / 30</div></div><div style="text-align:right"><div class="kicker">TINGKAT BISNIS</div><strong id="rank">Pemula</strong></div></div>
+ <div style="height:7px;background:#ffffff38;border-radius:8px;margin-top:12px"><div id="progress" style="height:7px;width:3.3%;background:#b9e6bd;border-radius:8px"></div></div>
+</header>
+<div class="grid">
+ <div class="card"><div class="label">Kas tersedia</div><div class="value" id="cash">Rp10 jt</div></div>
+ <div class="card"><div class="label">Nilai persediaan</div><div class="value" id="inventoryValue">Rp1,5 jt</div></div>
+ <div class="card"><div class="label">Reputasi</div><div class="value" id="rep">50/100</div></div>
+ <div class="card"><div class="label">Utang</div><div class="value" id="debt">Rp0</div></div>
+</div>
+<section class="card">
+ <h2>🏪 Toko Sederhana</h2>
+ <div class="grid">
+  <div><div class="label">Stok barang</div><div class="value" id="stock">30 unit</div></div>
+  <div><div class="label">Harga jual</div><div class="value" id="priceLabel">Rp80.000</div></div>
+  <div><div class="label">Perkiraan permintaan</div><div class="value" id="demand">12 unit</div></div>
+  <div><div class="label">Unit terjual</div><div class="value" id="units">0 unit</div></div>
+ </div>
+</section>
+<section class="card">
+ <h2>📋 Pusat Keputusan</h2>
+ <div class="twocol">
+  <div><b>1. Pengadaan barang</b><p class="small">Harga pokok Rp50.000 per unit</p><div class="btnrow"><button data-buy="5">+5 unit</button><button data-buy="10">+10 unit</button><button data-buy="20">+20 unit</button></div></div>
+  <div><b>2. Tentukan harga jual</b><p class="small">Harga memengaruhi jumlah permintaan</p><div class="choicegrid"><button data-price="65000">Rp65 rb</button><button data-price="80000">Rp80 rb</button><button data-price="100000">Rp100 rb</button></div></div>
+ </div>
+ <div style="margin-top:16px"><b>3. Strategi pemasaran</b><p class="small">Pilih anggaran promosi harian</p><div class="choicegrid two"><button data-ad="0">Tanpa iklan<span class="small">Gratis</span></button><button data-ad="100000">Promosi kecil<span class="small">Rp100 ribu</span></button><button data-ad="250000">Promosi sedang<span class="small">Rp250 ribu</span></button><button data-ad="500000">Promosi besar<span class="small">Rp500 ribu</span></button></div></div>
+ <div class="note" style="margin-top:14px"><b>Estimasi sebelum menjalankan hari</b><div class="row"><span>Potensi permintaan</span><b id="estimate">12 unit</b></div><div class="row"><span>Biaya pemasaran</span><b id="adCost">Rp0</b></div><div class="row"><span>Biaya operasional</span><b>Rp100.000</b></div><p class="small" style="margin-bottom:0">Hasil aktual dapat berubah karena kondisi pasar dan kejadian acak.</p></div>
+ <button class="primary" id="nextDay" style="width:100%;margin-top:14px">▶ Jalankan hari berikutnya</button>
+</section>
+<div class="twocol">
+ <section class="card"><h2>📊 Laporan Keuangan</h2><div class="rows">
+  <div class="row"><span class="label">Pendapatan penjualan</span><b id="revenue">Rp0</b></div>
+  <div class="row"><span class="label">Total biaya</span><b id="costs">Rp0</b></div>
+  <div class="row"><span class="label">Laba / rugi kumulatif</span><b id="profit">Rp0</b></div>
+  <div class="row"><span class="label">Kekayaan bersih</span><b id="wealth">Rp11,5 jt</b></div>
+ </div></section>
+ <section class="card"><h2>🎯 Target musim</h2><div class="rows">
+  <div class="row"><span class="label">Durasi</span><b>30 hari</b></div><div class="row"><span class="label">Target kekayaan</span><b>Rp15 juta</b></div><div class="row"><span class="label">Target reputasi</span><b>70/100</b></div>
+ </div><p class="small">Kekayaan = kas + nilai persediaan − utang.</p></section>
+</div>
+<section class="card"><h2>📰 Aktivitas Bisnis</h2><div id="history" aria-live="polite">Hari 1: Toko dibuka dengan modal Rp10 juta.</div></section>
+<section class="card hidden" id="finalReport" aria-live="polite"></section>
+<div class="btnrow"><button id="restart">↻ Mulai ulang</button><button id="rules">ℹ Aturan permainan</button></div>
+<section class="card hidden" id="help"><h2>Aturan permainan</h2><ul><li>Modal awal Rp10 juta dan stok awal 30 unit.</li><li>Harga pokok barang Rp50.000 per unit.</li><li>Biaya operasional tetap Rp100.000 per hari.</li><li>Promosi meningkatkan permintaan, tetapi mengurangi kas.</li><li>Persediaan yang belum terjual tetap menjadi aset.</li><li>Jika kas tidak cukup dan kas di bawah Rp300 ribu, pinjaman darurat Rp2 juta dapat diambil. Bunga 2% per hari.</li><li>Permainan berlangsung selama 30 hari.</li></ul></section>
+<footer>ECONOMY TYCOON · Prototype 1.0 · Simulasi edukasi</footer>
+</main>
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id), money=n=>'Rp'+Math.round(n).toLocaleString('id-ID');
+const initial=()=>({day:1,cash:10000000,stock:30,price:80000,ad:0,rep:50,debt:0,revenue:0,costs:0,profit:0,units:0,market:12,logs:['Hari 1: Toko dibuka dengan modal Rp10 juta.'],done:false});
+let s=initial();
+function wealth(){return s.cash+s.stock*50000-s.debt}
+function rank(){let w=wealth();return w>=20000000?'Taipan':w>=15000000?'Pengusaha mapan':w>=11000000?'Berkembang':'Pemula'}
+function demand(){let f=s.price===65000?1.35:s.price===100000?.66:1;let a=s.ad===100000?3:s.ad===250000?7:s.ad===500000?13:0;return Math.max(0,Math.round(s.market*f+(s.rep-50)*.1+a))}
+function log(t){s.logs.unshift('Hari '+String(s.day).padStart(2,'0')+': '+t);s.logs=s.logs.slice(0,8)}
+function render(){
+ $('day').textContent=String(s.day).padStart(2,'0')+' / 30';$('progress').style.width=(s.day/30*100)+'%';$('rank').textContent=rank();
+ $('cash').textContent=money(s.cash);$('inventoryValue').textContent=money(s.stock*50000);$('rep').textContent=s.rep+'/100';$('debt').textContent=money(s.debt);
+ $('stock').textContent=s.stock+' unit';$('priceLabel').textContent=money(s.price);$('demand').textContent=demand()+' unit';$('units').textContent=s.units+' unit';
+ $('estimate').textContent=demand()+' unit';$('adCost').textContent=money(s.ad);$('revenue').textContent=money(s.revenue);$('costs').textContent=money(s.costs);$('profit').textContent=money(s.profit);$('profit').className=s.profit>=0?'good':'bad';$('wealth').textContent=money(wealth());
+ $('history').innerHTML=s.logs.map(x=>'<div class="log">'+x.replaceAll('&','&amp;').replaceAll('<','&lt;')+'</div>').join('');
+ document.querySelectorAll('[data-buy]').forEach(b=>b.disabled=s.done||s.cash<Number(b.dataset.buy)*50000);
+ document.querySelectorAll('[data-price]').forEach(b=>{b.disabled=s.done;b.classList.toggle('selected',Number(b.dataset.price)===s.price)});
+ document.querySelectorAll('[data-ad]').forEach(b=>{b.disabled=s.done;b.classList.toggle('selected',Number(b.dataset.ad)===s.ad)});
+ $('nextDay').disabled=s.done;$('nextDay').textContent=s.done?'Musim selesai':'▶ Jalankan hari berikutnya';
+ if(s.done){$('finalReport').classList.remove('hidden');$('finalReport').innerHTML='<h2>🏆 Laporan akhir</h2><p>'+(wealth()>=15000000&&s.rep>=70?'Selamat! Target bisnis tercapai.':'Musim berakhir. Tinjau kembali strategi bisnismu.')+'</p><b>Kekayaan akhir: '+money(wealth())+'</b><br>Reputasi: '+s.rep+'/100<br>Laba/rugi: '+money(s.profit)}
+}
+document.querySelectorAll('[data-buy]').forEach(b=>b.addEventListener('click',()=>{let n=+b.dataset.buy,c=n*50000;if(s.done||s.cash<c)return;s.cash-=c;s.stock+=n;s.costs+=c;s.profit-=c;log('Membeli '+n+' unit stok, biaya '+money(c)+'.');render()}));
+document.querySelectorAll('[data-price]').forEach(b=>b.addEventListener('click',()=>{if(!s.done){s.price=+b.dataset.price;render()}}));
+document.querySelectorAll('[data-ad]').forEach(b=>b.addEventListener('click',()=>{if(!s.done){s.ad=+b.dataset.ad;render()}}));
+$('nextDay').addEventListener('click',()=>{
+ if(s.done)return;
+ let expense=100000+s.ad;
+ if(s.cash<expense){if(s.cash<300000&&s.debt<4000000){s.cash+=2000000;s.debt+=2000000;log('Mengambil pinjaman darurat Rp2 juta.')}else{log('Kas tidak cukup untuk membayar biaya harian.');s.rep=Math.max(0,s.rep-3);s.day++;if(s.day>30){s.day=30;s.done=true}render();return}}
+ s.cash-=expense;s.costs+=expense;s.profit-=expense;
+ let event=Math.floor(Math.random()*5),shock=Math.floor(Math.random()*7)-3,extra='';
+ if(event===0){shock-=4;extra=' Daya beli melemah.'}if(event===1){shock+=5;extra=' Festival meningkatkan permintaan.'}
+ if(event===2){s.rep=Math.min(100,s.rep+3);extra=' Ulasan positif.'}if(event===3){s.rep=Math.max(0,s.rep-3);extra=' Ada keluhan pelanggan.'}
+ s.market=Math.max(2,Math.min(28,s.market+shock));
+ let wanted=Math.max(0,demand()+Math.floor(Math.random()*5)-2),sold=Math.min(s.stock,wanted),rev=sold*s.price,cogs=sold*50000;
+ s.stock-=sold;s.cash+=rev;s.revenue+=rev;s.units+=sold;s.profit+=rev-cogs;
+ if(sold>=8)s.rep=Math.min(100,s.rep+1);if(sold===0)s.rep=Math.max(0,s.rep-2);if(sold<wanted)extra+=' Ada permintaan tak terpenuhi.';
+ s.day++;if(s.debt){let interest=Math.ceil(s.debt*.02);s.cash-=interest;s.costs+=interest;s.profit-=interest;extra+=' Bunga pinjaman '+money(interest)+'.'}
+ log('Terjual '+sold+' dari '+wanted+' unit. Pendapatan '+money(rev)+'.'+extra);s.ad=0;
+ if(s.day>30){s.day=30;s.done=true;log('Musim berakhir.')}
+ render();
+});
+$('restart').addEventListener('click',()=>{if(confirm('Mulai permainan baru? Progres saat ini akan hilang.')){s=initial();render()}});
+$('rules').addEventListener('click',()=>$('help').classList.toggle('hidden'));
+render();
+})();
+</script>
+</body></html>
